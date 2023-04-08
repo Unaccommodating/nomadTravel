@@ -15,18 +15,13 @@ class OnboardingController {
 
     async create(req, res, next) {
         try {
-            const {titleRu} = req.body
-            const {titleEn} = req.body
-            const {descriptionRu} = req.body
-            const {descriptionEn} = req.body
+            const {title} = req.body
+            const {description} = req.body
             const {img} = req.files
             let fileName = uuid.v4() + ".jpg"
             img.mv(path.resolve(__dirname, '..', 'static', fileName))
-
             const onboarding = await Onboarding.create({
-                    titleRu, titleEn,
-                    descriptionRu, descriptionEn,
-                    img: fileName
+                title, description, img: fileName
                 })
             return res.json(onboarding)
         } catch (e) {

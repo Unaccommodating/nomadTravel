@@ -13,6 +13,14 @@ class CityController {
         return res.json(cities)
     }
 
+    async getOne(req, res){
+        const {name} = req.params
+        const cities = await City.findOne({
+            where: {name},
+        })
+        return res.json(cities)
+    }
+
     async create(req, res, next) {
         try{
             const {name} = req.body

@@ -47,6 +47,20 @@ class UserController {
         return res.json({token})
     }
 
+    async getUser(req, res, next){
+        try {
+            const token = req.headers.authorization
+            const userInfo = jwt.decode(token);
+            const id = userInfo.id
+            const user = await User.findOne({
+                where: {id}, attributes: {exclude: ['password']},
+            })
+            return res.json(user)
+        } catch (e) {
+            return res.status(401).json({message:"Не удается получить пользователя"})
+        }
+    }
+
     async check(req, res, next) {
         const token = generateJWT(req.user.id, req.user.email)
         return res.json({token})

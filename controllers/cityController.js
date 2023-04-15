@@ -15,13 +15,12 @@ class CityController {
 
     async create(req, res, next) {
         try{
-            const {nameRu} = req.body
-            const {nameEn} = req.body
+            const {name} = req.body
             const {img} = req.files
             let fileName = uuid.v4() + ".jpg"
-            img.mv(path.resolve(__dirname, '..', 'static', fileName))
+            img.mv(path.resolve(__dirname, '../static', 'cities', fileName))
 
-            const city = await City.create({nameRu, nameEn, img: fileName})
+            const city = await City.create({name, img: fileName})
             return res.json(city)
         }
         catch (e) {

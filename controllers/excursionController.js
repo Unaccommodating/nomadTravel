@@ -9,25 +9,19 @@ class ExcursionController {
         page = page || 1
         limit = limit || 9
         let offset = page * limit - limit
-        const cities = await Excursion.findAndCountAll({limit, offset})
-        return res.json(cities)
+        const excursion = await Excursion.findAndCountAll({limit, offset})
+        return res.json(excursion)
     }
 
-    async create(req, res, next) {
-        try{
-            const {nameRu} = req.body
-            const {nameEn} = req.body
-            const {img} = req.files
-            let fileName = uuid.v4() + ".jpg"
-            img.mv(path.resolve(__dirname, '..', 'static', fileName))
-
-            const city = await Excursion.create({nameRu, nameEn, img: fileName})
-            return res.json(city)
-        }
-        catch (e) {
-            next(ApiError.badRequest(e.message))
-        }
+    async create(req, res) {
+        let {title, description, repeat_type,
+            start_date, time, day_week,
+            end_date, place_address, places_number,
+            price, excursion_type, hashtag,
+            included, additional_services, organizational_details,
+            duration} = req.body
     }
+
 }
 
 module.exports = new ExcursionController()

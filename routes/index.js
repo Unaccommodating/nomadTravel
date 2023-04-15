@@ -4,10 +4,12 @@ const cityRouter = require('./cityRouter')
 const onboardingRouter = require('./onboardingRouter')
 const videoTripRouter = require('./videoTripRouter')
 const userRouter = require('./userRouter')
+const excursionRouter = require('./excursionRouter')
 
 router.use('/city', cityRouter)
 router.use('/onboarding', onboardingRouter)
 router.use('/videotrip', videoTripRouter)
 router.use('/user', userRouter)
+router.use('/excursion', excursionRouter)
 
 module.exports = router

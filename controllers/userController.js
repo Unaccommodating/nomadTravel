@@ -16,7 +16,9 @@ const generateJWT = (id, email) => {
 
 class UserController {
     async registration(req, res, next) {
-        const {name, email, phone, password, hashtag, ref_key} = req.body
+        const {name, email, phone, password, hashtag} = req.body
+        const ref_key = uuid.v4()
+        const rating = 4.5
         if (!email || !password) {
             return next(ApiError.badRequest('Некорректный email или password'))
         }
@@ -28,7 +30,7 @@ class UserController {
         const {img} = req.files
         let fileName = uuid.v4() + ".jpg"
         img.mv(path.resolve(__dirname, '../static', 'users', fileName))
-        const user = await User.create({name, email, phone, password: hashPassword, hashtag, ref_key})
+        const user = await User.create({name, email, phone, password: hashPassword, hashtag, ref_key, rating})
         const token = generateJWT(user.id, user.email)
         return res.json({token})
     }

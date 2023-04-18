@@ -30,7 +30,7 @@ class UserController {
         const {img} = req.files
         let fileName = uuid.v4() + ".jpg"
         img.mv(path.resolve(__dirname, '../static', 'users', fileName))
-        const user = await User.create({name, email, phone, password: hashPassword, hashtag, ref_key, rating})
+        const user = await User.create({name, email, phone, password: hashPassword, hashtag, ref_key, rating, img: fileName})
         const token = generateJWT(user.id, user.email)
         return res.json({token})
     }

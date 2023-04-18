@@ -56,7 +56,7 @@ const User = sequelize.define('user', {
     creator: {type: DataTypes.BOOLEAN, defaultValue: false},
     hashtag: {type: DataTypes.JSON},
     ref_key: {type: DataTypes.STRING},
-    rating: {type: DataTypes.INTEGER},
+    rating: {type: DataTypes.FLOAT},
     total_count: {type: DataTypes.INTEGER},
 })
 

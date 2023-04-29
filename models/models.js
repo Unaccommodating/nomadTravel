@@ -31,7 +31,7 @@ const Excursion = sequelize.define('excursion', {
     images: {type: DataTypes.JSON},
     repeat_type: {type: DataTypes.ENUM('everyday', 'never', 'certainDays'), allowNull: false},
     start_date: {type: DataTypes.DATE, allowNull: false},
-    time: {type: DataTypes.DATE, allowNull: false},
+    time: {type: DataTypes.STRING, allowNull: false},
     day_week: {type: DataTypes.JSON},
     end_date: {type: DataTypes.DATE},
     place_address: {type: DataTypes.STRING, allowNull: false},

@@ -27,10 +27,15 @@ class UserController {
             return next(ApiError.badRequest('Пользователь с таким email уже существует'))
         }
         const hashPassword = await bcrypt.hash(password, 5)
-        const {img} = req.files
-        let fileName = uuid.v4() + ".jpg"
-        img.mv(path.resolve(__dirname, '../static', 'users', fileName))
-        const user = await User.create({name, email, phone, password: hashPassword, hashtag, ref_key, rating, img: fileName})
+        const img = req.files ? req.files.img : null
+        let fileName
+        if (img) {
+            fileName = uuid.v4() + ".jpg"
+            img.mv(path.resolve(__dirname, '../static', 'users', fileName))
+        } else {
+            fileName = null
+        }
+        const user = await User.create({name, email, phone, password: hashPassword, hashtag, ref_key, rating, img: fileName || null})
         const token = generateJWT(user.id, user.email)
         return res.json({token})
     }

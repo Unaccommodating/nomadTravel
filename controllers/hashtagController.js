@@ -1,4 +1,4 @@
-const {Hashtag} = require("../models/models");
+const {Hashtag, UserHashtag} = require("../models/models");
 const uuid = require('uuid')
 const path = require('path')
 const ApiError = require('../error/ApiError')
@@ -11,6 +11,25 @@ class HashtagController {
         let offset = page * limit - limit
         const hashtags = await Hashtag.findAndCountAll({limit, offset})
         return res.json(hashtags)
+    }
+
+    async connectToUser(req, res, next) {
+        try{
+            let {user_id, hashtags} = req.body
+            if (hashtags){
+                hashtags = hashtags.split(',');
+                hashtags.forEach(tag =>
+                    UserHashtag.create({
+                        user_id: user_id,
+                        hashtag_id: tag
+                })
+                )
+            }
+            return res.status(200).json({message: "успешно добавлены"})
+        }
+        catch (e) {
+            next(ApiError.badRequest(e.message))
+        }
     }
 
     async create(req, res, next) {

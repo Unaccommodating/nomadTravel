@@ -1,9 +1,10 @@
 const ApiError = require('../error/ApiError')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const {User} = require('../models/models')
+const {User, UserHashtag, Hashtag} = require('../models/models')
 const uuid = require("uuid");
 const path = require("path");
+const {where} = require("sequelize");
 
 
 const generateJWT = (id, email) => {
@@ -62,7 +63,22 @@ class UserController {
             const user = await User.findOne({
                 where: {id}, attributes: {exclude: ['password']},
             })
-            return res.json(user)
+            const userHashtags = await UserHashtag.findAll({
+                where: {
+                    user_id: id
+                }
+            })
+            let hashtagIdArray = []
+            userHashtags.forEach(tag =>
+                hashtagIdArray.push(tag.hashtag_id)
+            )
+            const hashtags = await Hashtag.findAll({
+                where: {
+                    id: hashtagIdArray
+                } , attributes: {exclude: ['createdAt', 'updatedAt']},
+            })
+            const userWithHashtags = {user, hashtags}
+            return res.json(userWithHashtags)
         } catch (e) {
             return res.status(401).json({message:"Не удается получить пользователя"})
         }

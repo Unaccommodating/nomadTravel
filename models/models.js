@@ -28,21 +28,16 @@ const Excursion = sequelize.define('excursion', {
     title: {type: DataTypes.STRING, allowNull: false},
     description: {type: DataTypes.STRING},
     background_img: {type: DataTypes.STRING},
-    images: {type: DataTypes.JSON},
-    repeat_type: {type: DataTypes.ENUM('everyday', 'never', 'certainDays'), allowNull: false},
-    start_date: {type: DataTypes.DATE, allowNull: false},
-    time: {type: DataTypes.STRING, allowNull: false},
-    day_week: {type: DataTypes.JSON},
-    end_date: {type: DataTypes.DATE},
+    images: {type: DataTypes.ARRAY(DataTypes.STRING)},
     place_address: {type: DataTypes.STRING, allowNull: false},
+    dates: {type: DataTypes.JSON},
     places_number: {type: DataTypes.INTEGER, allowNull: false},
     price: {type: DataTypes.INTEGER, allowNull: false},
     excursion_type: {type: DataTypes.ENUM('group', 'individual'), allowNull: false},
-    hashtag: {type: DataTypes.JSON},
     included: {type: DataTypes.STRING},
     additional_services: {type: DataTypes.STRING},
     organizational_details: {type: DataTypes.STRING},
-    duration: {type: DataTypes.STRING},
+    duration_minutes: {type: DataTypes.INTEGER},
 })
 
 const User = sequelize.define('user', {
@@ -54,7 +49,6 @@ const User = sequelize.define('user', {
     img: {type: DataTypes.STRING},
     password: {type: DataTypes.STRING},
     creator: {type: DataTypes.BOOLEAN, defaultValue: false},
-    hashtag: {type: DataTypes.JSON},
     ref_key: {type: DataTypes.STRING},
     rating: {type: DataTypes.FLOAT},
     total_count: {type: DataTypes.INTEGER},
@@ -65,22 +59,30 @@ const Hashtag = sequelize.define('hashtag', {
     title: {type: DataTypes.STRING},
 })
 
-const DataBook = sequelize.define('dataBook', {
+const UserHashtag = sequelize.define('user_hashtag', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+})
+
+const ExcursionHashtag = sequelize.define('excursion_hashtag', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+})
+
+const DataBook = sequelize.define('data_book', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     count_tickets: {type: DataTypes.INTEGER},
     date: {type: DataTypes.DATE, allowNull: false},
 })
 
-const VideoTrip = sequelize.define('videoTrip', {
+const VideoTrip = sequelize.define('video_trip', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     title: {type: DataTypes.STRING, allowNull: false},
     description: {type: DataTypes.STRING},
     video: {type: DataTypes.STRING},
     price: {type: DataTypes.INTEGER},
-    hashtag: {type: DataTypes.JSON},
+    hashtag: {type: DataTypes.ARRAY(DataTypes.INTEGER)},
 })
 
-const VideoSales = sequelize.define('videoSales', {
+const VideoSales = sequelize.define('video_sales', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
@@ -100,6 +102,11 @@ VideoTrip.belongsToMany(User, {through: VideoSales})
 User.belongsToMany(Excursion, {through: DataBook})
 Excursion.belongsToMany(User, {through: DataBook})
 
+User.belongsToMany(Hashtag, {through: UserHashtag, as: 'hashtag',  foreignKey: "user_id"})
+Hashtag.belongsToMany(User, {through: UserHashtag, as: 'user',  foreignKey: "hashtag_id"})
+
+Excursion.belongsToMany(Hashtag, {through: ExcursionHashtag, as: 'hashtag',  foreignKey: "excursion_id"})
+Hashtag.belongsToMany(Excursion, {through: ExcursionHashtag, as: 'excursion',  foreignKey: "hashtag_id"})
 
 module.exports = {
     City,
@@ -110,5 +117,6 @@ module.exports = {
     Hashtag,
     DataBook,
     VideoTrip,
-    VideoSales
+    VideoSales,
+    UserHashtag
 }

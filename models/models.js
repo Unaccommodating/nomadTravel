@@ -30,7 +30,7 @@ const Excursion = sequelize.define('excursion', {
     background_img: {type: DataTypes.STRING},
     images: {type: DataTypes.ARRAY(DataTypes.STRING)},
     place_address: {type: DataTypes.STRING, allowNull: false},
-    dates: {type: DataTypes.JSON},
+    dates: {type: DataTypes.ARRAY(DataTypes.JSON)},
     places_number: {type: DataTypes.INTEGER, allowNull: false},
     price: {type: DataTypes.INTEGER, allowNull: false},
     excursion_type: {type: DataTypes.ENUM('group', 'individual'), allowNull: false},
@@ -90,23 +90,23 @@ const VideoSales = sequelize.define('video_sales', {
 City.hasMany(Excursion)
 Excursion.belongsTo(City)
 
-User.hasMany(Excursion)
+User.hasMany(Excursion, {as: 'guide'})
 Excursion.belongsTo(User)
 
-User.hasMany(VideoTrip)
+User.hasMany(VideoTrip, {as: 'blogger'})
 VideoTrip.belongsTo(User)
 
 User.belongsToMany(VideoTrip, {through: VideoSales})
 VideoTrip.belongsToMany(User, {through: VideoSales})
 
-User.belongsToMany(Excursion, {through: DataBook})
-Excursion.belongsToMany(User, {through: DataBook})
+User.belongsToMany(Excursion, {through: DataBook, as: 'tourist',  foreignKey: "tourist_id"})
+Excursion.belongsToMany(User, {through: DataBook, as: 'tour', foreignKey: "excursion_id"})
 
-User.belongsToMany(Hashtag, {through: UserHashtag, as: 'hashtag',  foreignKey: "user_id"})
-Hashtag.belongsToMany(User, {through: UserHashtag, as: 'user',  foreignKey: "hashtag_id"})
+User.belongsToMany(Hashtag, {through: UserHashtag, as: 'hashtagUser',  foreignKey: "user_id"})
+Hashtag.belongsToMany(User, {through: UserHashtag, as: 'userHashtag',  foreignKey: "hashtag_id"})
 
-Excursion.belongsToMany(Hashtag, {through: ExcursionHashtag, as: 'hashtag',  foreignKey: "excursion_id"})
-Hashtag.belongsToMany(Excursion, {through: ExcursionHashtag, as: 'excursion',  foreignKey: "hashtag_id"})
+Excursion.belongsToMany(Hashtag, {through: ExcursionHashtag, as: 'hashtagExcursion',  foreignKey: "excursion_id"})
+Hashtag.belongsToMany(Excursion, {through: ExcursionHashtag, as: 'excursionHashtag',  foreignKey: "hashtag_id"})
 
 module.exports = {
     City,

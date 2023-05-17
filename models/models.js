@@ -55,7 +55,7 @@ const User = sequelize.define('user', {
     rating: {type: DataTypes.FLOAT},
     total_count: {type: DataTypes.INTEGER},
     free_book_count: {type: DataTypes.INTEGER},
-    code: {}
+    code: {type: DataTypes.INTEGER}
 })
 
 const Hashtag = sequelize.define('hashtag', {

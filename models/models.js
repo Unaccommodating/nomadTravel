@@ -5,6 +5,7 @@ const City = sequelize.define('city', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, unique: true, allowNull: false},
     img: {type: DataTypes.STRING, allowNull: false},
+    timestamps: false,
 })
 
 const Onboarding = sequelize.define('onboarding', {
@@ -12,6 +13,7 @@ const Onboarding = sequelize.define('onboarding', {
     title: {type: DataTypes.STRING},
     description: {type: DataTypes.STRING},
     img: {type: DataTypes.STRING},
+    timestamps: false,
 })
 
 const Notification = sequelize.define('notification', {
@@ -26,7 +28,7 @@ const Notification = sequelize.define('notification', {
 const Excursion = sequelize.define('excursion', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     title: {type: DataTypes.STRING, allowNull: false},
-    description: {type: DataTypes.STRING},
+    description: {type: DataTypes.STRING, allowNull: false},
     background_img: {type: DataTypes.STRING},
     images: {type: DataTypes.ARRAY(DataTypes.STRING)},
     place_address: {type: DataTypes.STRING, allowNull: false},
@@ -52,19 +54,24 @@ const User = sequelize.define('user', {
     ref_key: {type: DataTypes.STRING},
     rating: {type: DataTypes.FLOAT},
     total_count: {type: DataTypes.INTEGER},
+    free_book_count: {type: DataTypes.INTEGER},
+    code: {}
 })
 
 const Hashtag = sequelize.define('hashtag', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     title: {type: DataTypes.STRING},
+    timestamps: false,
 })
 
 const UserHashtag = sequelize.define('user_hashtag', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    timestamps: false,
 })
 
 const ExcursionHashtag = sequelize.define('excursion_hashtag', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    timestamps: false,
 })
 
 const DataBook = sequelize.define('data_book', {
@@ -118,5 +125,6 @@ module.exports = {
     DataBook,
     VideoTrip,
     VideoSales,
-    UserHashtag
+    UserHashtag,
+    ExcursionHashtag
 }

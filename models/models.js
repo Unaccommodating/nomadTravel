@@ -5,7 +5,8 @@ const City = sequelize.define('city', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, unique: true, allowNull: false},
     img: {type: DataTypes.STRING, allowNull: false},
-    timestamps: false,
+}, {
+    timestamps: false
 })
 
 const Onboarding = sequelize.define('onboarding', {
@@ -13,7 +14,8 @@ const Onboarding = sequelize.define('onboarding', {
     title: {type: DataTypes.STRING},
     description: {type: DataTypes.STRING},
     img: {type: DataTypes.STRING},
-    timestamps: false,
+}, {
+    timestamps: false
 })
 
 const Notification = sequelize.define('notification', {
@@ -61,17 +63,20 @@ const User = sequelize.define('user', {
 const Hashtag = sequelize.define('hashtag', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     title: {type: DataTypes.STRING},
-    timestamps: false,
+}, {
+    timestamps: false
 })
 
 const UserHashtag = sequelize.define('user_hashtag', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    timestamps: false,
+}, {
+    timestamps: false
 })
 
 const ExcursionHashtag = sequelize.define('excursion_hashtag', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    timestamps: false,
+}, {
+    timestamps: false
 })
 
 const DataBook = sequelize.define('data_book', {

@@ -1,6 +1,6 @@
 const Router = require('express')
 const router = new Router()
-const bookingController = require('../controllers/BookingController')
+const bookingController = require('../controllers/bookingController')
 
 router.post('/', bookingController.book)
 

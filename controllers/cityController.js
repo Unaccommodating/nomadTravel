@@ -2,15 +2,34 @@ const {City} = require("../models/models");
 const uuid = require('uuid')
 const path = require('path')
 const ApiError = require('../error/ApiError')
+const {Op} = require("sequelize");
 
 class CityController {
     async getAll(req, res) {
-        let {limit, page} = req.query
-        page = page || 1
-        limit = limit || 9
-        let offset = page * limit - limit
-        const cities = await City.findAndCountAll({limit, offset})
-        return res.json(cities)
+        let { limit, page, query } = req.query;
+        page = page || 1;
+        limit = limit || 9;
+        const offset = (page - 1) * limit;
+
+        const filter = {
+            limit,
+            offset,
+            where: {},
+        };
+
+        if (query) {
+            filter.where.name = {
+                [Op.iLike]: `%${query}%`,
+            };
+        }
+
+        try {
+            const cities = await City.findAndCountAll(filter);
+            return res.json(cities);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
     }
 
     async getOne(req, res){

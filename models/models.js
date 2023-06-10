@@ -51,13 +51,18 @@ const User = sequelize.define('user', {
     phone: {type: DataTypes.STRING, allowNull: false},
     confirmed: {type: DataTypes.BOOLEAN, defaultValue: false},
     img: {type: DataTypes.STRING},
-    password: {type: DataTypes.STRING},
     creator: {type: DataTypes.BOOLEAN, defaultValue: false},
     ref_key: {type: DataTypes.STRING},
     rating: {type: DataTypes.FLOAT},
     total_count: {type: DataTypes.INTEGER},
-    free_book_count: {type: DataTypes.INTEGER},
-    code: {type: DataTypes.INTEGER}
+    free_book_count: {type: DataTypes.INTEGER}
+})
+
+const Candidate = sequelize.define('candidate', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    email: {type: DataTypes.STRING, unique: true, allowNull: false},
+    code: {type: DataTypes.INTEGER},
+    active: {type: DataTypes.BOOLEAN, defaultValue: false},
 })
 
 const Hashtag = sequelize.define('hashtag', {
@@ -90,6 +95,7 @@ const VideoTrip = sequelize.define('video_trip', {
     title: {type: DataTypes.STRING, allowNull: false},
     description: {type: DataTypes.STRING},
     video: {type: DataTypes.STRING},
+    background_img: {type: DataTypes.STRING},
     price: {type: DataTypes.INTEGER},
     hashtag: {type: DataTypes.ARRAY(DataTypes.INTEGER)},
 })
@@ -101,6 +107,9 @@ const VideoSales = sequelize.define('video_sales', {
 
 City.hasMany(Excursion)
 Excursion.belongsTo(City)
+
+Candidate.hasOne(User, {foreignKey: 'candidate_id'});
+User.belongsTo(Candidate);
 
 User.hasMany(Excursion, {as: 'guide'})
 Excursion.belongsTo(User)
@@ -126,6 +135,7 @@ module.exports = {
     Notification,
     Excursion,
     User,
+    Candidate,
     Hashtag,
     DataBook,
     VideoTrip,

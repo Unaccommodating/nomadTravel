@@ -34,7 +34,7 @@ const Excursion = sequelize.define('excursion', {
     background_img: {type: DataTypes.STRING},
     images: {type: DataTypes.ARRAY(DataTypes.STRING)},
     place_address: {type: DataTypes.STRING, allowNull: false},
-    dates: {type: DataTypes.ARRAY(DataTypes.JSON)},
+    dates: {type: DataTypes.JSONB},
     places_number: {type: DataTypes.INTEGER, allowNull: false},
     price: {type: DataTypes.INTEGER, allowNull: false},
     excursion_type: {type: DataTypes.ENUM('group', 'individual'), allowNull: false},

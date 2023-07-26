@@ -34,27 +34,27 @@ class UserController {
         } else {
             if (candidate.active){
                 const verificationCode = generateVerificationCode();
-                candidate.code = verificationCode
-                await candidate.save()
-                const userController = new UserController()
-                await userController.sendCode(email, verificationCode)
-                return res.json({answer: true})
+                candidate.code = verificationCode;
+                await candidate.save();
+                const userController = new UserController();
+                await userController.sendCode(email, verificationCode);
+                return res.json({answer: true});
             } else {
-                return res.json({answer: false})
+                return res.json({answer: false});
             }
         }
     }
 
     async registration(req, res, next) {
-        const {name, email, phone, hashtag, ref_key} = req.body
-        const rating = 4.5
+        const {name, email, phone, hashtag, ref_key} = req.body;
+        const rating = 4.5;
         if (!email) {
-            return next(ApiError.badRequest('Некорректный email'))
+            return next(ApiError.badRequest('Некорректный email'));
         }
-        const candidate = await Candidate.findOne({where: {email}})
+        const candidate = await Candidate.findOne({where: {email}});
         if (candidate) {
             if (candidate.active) {
-                return next(ApiError.badRequest('Аккаунт зарегестрирован. Авторизируйтесь в приложении'))
+                return next(ApiError.badRequest('Аккаунт зарегестрирован. Авторизируйтесь в приложении'));
             }
         }
 
@@ -156,7 +156,10 @@ class UserController {
         const mailObject = {
             to: email,
             subject: "Давай верифицируемся 🔥",
-            html: `<h1>ВАШ КОД ${verificationCode}</h1>`}
+            html: `<h1>ВАШ КОД ${verificationCode}</h1></br>
+                   <p>Не показывайте его другим людям</p></hr>
+                   <p>Данное сообщение было сгененировано автоматически. Не отвечайте на данное сообщение</p></br>
+                   <p>Команда NomadTravel</p>`}
         await transporter.sendMail(mailObject)
     }
 

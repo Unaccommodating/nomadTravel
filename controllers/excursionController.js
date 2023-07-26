@@ -1,8 +1,8 @@
-const {Excursion, User, ExcursionHashtag, Hashtag} = require("../models/models");
+const {Excursion, User, ExcursionHashtag, Hashtag, DataBook} = require("../models/models");
 const uuid = require('uuid')
 const path = require('path')
 const jwt = require("jsonwebtoken");
-const {Op, literal} = require("sequelize");
+const {Op, Sequelize} = require("sequelize");
 
 class ExcursionController {
     async getAll(req, res) {
@@ -20,8 +20,7 @@ class ExcursionController {
             attributes: {
                 exclude: [
                     'description', 'images', 'place_address',
-                    'dates', 'included', 'additional_services',
-                    'organizational_details'
+                    'included', 'additional_services', 'organizational_details'
                 ],
             },
             include: [],
@@ -63,9 +62,13 @@ class ExcursionController {
         }
 
         if (startDate && endDate) {
-            filter.where.dates = {
-                
-            };
+            filter.where[Op.and] = Sequelize.literal(`
+            EXISTS (
+              SELECT 1
+              FROM JSONB_ARRAY_ELEMENTS(dates) AS d
+              WHERE (d->>'date')::date BETWEEN '${startDate}' AND '${endDate}'
+            )
+          `);
         }
 
         if (rating) {
@@ -167,6 +170,40 @@ class ExcursionController {
             })
         }
         return res.json(excursion)
+    }
+
+    async myAddedExcursions(req, res){
+        try {
+            const token = req.headers.authorization
+            const userInfo = jwt.decode(token)
+            const excursions = await Excursion.findAndCountAll({
+                where: {
+                    userId: userInfo.id
+                }
+            });
+            return res.json(excursions);
+        } catch (e) {
+            return res.status(401).json({message:"Не удается получить пользователя"})
+        }
+    }
+
+    async bookExcursion(req, res){
+        try {
+            const token = req.headers.authorization
+            const userInfo = jwt.decode(token)
+            let {
+                excursion_id, count_tickets, date
+            } = req.body
+            DataBook.create({
+                count_tickets,
+                date,
+                tourist_id: userInfo.id,
+                excursion_id: excursion_id,
+            })
+            return res.json(DataBook);
+        } catch (e) {
+            return res.status(401).json({message:"Не удается получить пользователя"})
+        }
     }
 
 }

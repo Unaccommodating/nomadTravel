@@ -74,7 +74,7 @@ class ExcursionController {
         if (rating) {
             filter.include.push({
                 model: User,
-                attributes: ['name', 'img', 'rating'],
+                attributes: ['id', 'name', 'img', 'rating', 'phone'],
                 where: {
                     rating: {
                         [Op.gt]: 4,
@@ -84,7 +84,7 @@ class ExcursionController {
         } else {
             filter.include.push({
                 model: User,
-                attributes: ['name', 'img', 'rating'],
+                attributes: ['id', 'name', 'img', 'rating', 'phone'],
             });
         }
 

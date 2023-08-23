@@ -7,6 +7,7 @@ router.post('/', excursionController.create)
 router.get('/', excursionController.getAll)
 router.get('/:id', excursionController.getOne)
 router.post('/myAddedExcursions', excursionController.myAddedExcursions)
+router.post('/myBookedExcursions', excursionController.myBookedExcursions)
 router.post('/bookExcursion', excursionController.bookExcursion)
 
 module.exports = router

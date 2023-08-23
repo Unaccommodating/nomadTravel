@@ -1,8 +1,9 @@
-const {Excursion, User, ExcursionHashtag, Hashtag, DataBook} = require("../models/models");
+const {Excursion, User, ExcursionHashtag, Hashtag, DataBook, UserHashtag} = require("../models/models");
 const uuid = require('uuid')
 const path = require('path')
 const jwt = require("jsonwebtoken");
 const {Op, Sequelize} = require("sequelize");
+const nodemailer = require("nodemailer");
 
 class ExcursionController {
     async getAll(req, res) {
@@ -187,6 +188,31 @@ class ExcursionController {
         }
     }
 
+    async myBookedExcursions(req, res){
+        try {
+            const token = req.headers.authorization
+            const userInfo = jwt.decode(token)
+            const dataBook = await DataBook.findAll({
+                where: {
+                    tourist_id: userInfo.id
+                }
+            })
+            let dataBookArray = []
+            dataBook.forEach(book =>
+                dataBookArray.push(book.excursion_id)
+            )
+            const bookedExcursions = await Excursion.findAndCountAll({
+                where: {
+                    id: dataBookArray
+                } , attributes: {exclude: ['createdAt', 'updatedAt']},
+            })
+            // const userWithHashtags = {user, hashtags}
+            return res.json(bookedExcursions)
+        } catch (e) {
+            return res.status(401).json({message:"Не удается получить пользователя"})
+        }
+    }
+
     async bookExcursion(req, res){
         try {
             const token = req.headers.authorization
@@ -200,12 +226,90 @@ class ExcursionController {
                 tourist_id: userInfo.id,
                 excursion_id: excursion_id,
             })
-            return res.json(DataBook);
+            const excursionController = new ExcursionController()
+            await excursionController.sendCode("zininkrut@gmail.com")
+            return res.json('done');
         } catch (e) {
             return res.status(401).json({message:"Не удается получить пользователя"})
         }
     }
 
+    async sendCode(email) {
+        const transporter = nodemailer.createTransport({
+                host: 'smtp.mail.ru',
+                port: 465,
+                secure: true,
+                auth: {
+                    user: 'nomad_trave1@mail.ru',
+                    pass: 'dGPaRzUstddU0kjgAcrj'
+                }
+            },
+            {
+                from: "Nomad Travel <nomad_trave1@mail.ru>"
+            }
+        )
+        const mailObject = {
+            to: email,
+            subject: "ВАШ ЗАКАЗ",
+            html: `<!DOCTYPE html>
+                    <html lang="ru">
+                    <head>
+                        <title>Excursion Ticket</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                margin: 0;
+                                padding: 20px;
+                                background-color: #f2f2f2;
+                            }
+                            
+                            .ticket {
+                                max-width: 400px;
+                                margin: 0 auto;
+                                background-color: #fff;
+                                padding: 20px;
+                                border-radius: 5px;
+                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                                border: 5px solid #3498db;
+                            }
+                            
+                            h1 {
+                                font-size: 24px;
+                                color: #333;
+                                margin: 0;
+                                text-align: center;
+                                margin-bottom: 20px;
+                            }
+                            
+                            .info {
+                                margin-bottom: 20px;
+                            }
+                            
+                            .info p {
+                                margin: 0;
+                                color: #666;
+                            }
+                            
+                            .info strong {
+                                font-weight: bold;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="ticket">
+                            <h1>БИЛЕТ</h1>
+                            <div class="info">
+                                <p><strong>Название:</strong> Excursion Title</p>
+                                <p><strong>Кол-во билетов:</strong> 2</p>
+                                <p><strong>Цена:</strong> $50.00</p>
+                                <p><strong>Дата:</strong> January 1, 2022</p>
+                                <p><strong>Адрес:</strong> Excursion Address</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>`}
+        await transporter.sendMail(mailObject)
+    }
 }
 
 module.exports = new ExcursionController()

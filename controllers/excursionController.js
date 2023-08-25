@@ -120,6 +120,48 @@ class ExcursionController {
         return res.json(excursion)
     }
 
+    async getTouristsByDateAndTime(req, res) {
+        const { excursion_id, dateTime } = req.query;
+
+        try {
+            const dataBooks = await DataBook.findAll({
+                where: {
+                    excursion_id: excursion_id,
+                    date: {
+                        [Op.eq]: dateTime,
+                    },
+                },
+            });
+
+            const userIds = dataBooks.map(dataBook => dataBook.tourist_id);
+
+            const users = await User.findAll({
+                where: {
+                    id: userIds,
+                },
+                attributes: ['id', 'name', 'email', 'phone', 'img']
+            });
+
+            const usersWithTickets = users.map(user => {
+                const dataBook = dataBooks.find(dataBook => dataBook.tourist_id === user.id);
+                return {
+                    ...user.toJSON(),
+                    count_tickets: dataBook ? dataBook.count_tickets : 0,
+                };
+            });
+
+            const count = usersWithTickets.length;
+
+            return res.json({
+                count,
+                usersWithTickets,
+            });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
     async create(req, res) {
         let {
             title, description, place_address,
@@ -204,9 +246,9 @@ class ExcursionController {
             const bookedExcursions = await Excursion.findAndCountAll({
                 where: {
                     id: dataBookArray
-                } , attributes: {exclude: ['createdAt', 'updatedAt']},
+                },
+                attributes: {exclude: ['createdAt', 'updatedAt']},
             })
-            // const userWithHashtags = {user, hashtags}
             return res.json(bookedExcursions)
         } catch (e) {
             return res.status(401).json({message:"Не удается получить пользователя"})
@@ -217,16 +259,20 @@ class ExcursionController {
         try {
             const token = req.headers.authorization
             const userInfo = jwt.decode(token)
+            const excursionController = new ExcursionController()
             let {
                 excursion_id, count_tickets, date
             } = req.body
+            const excursion = await Excursion.findOne({
+                where: {id: excursion_id},
+                attributes: ['places_number']
+            })
             DataBook.create({
                 count_tickets,
                 date,
                 tourist_id: userInfo.id,
                 excursion_id: excursion_id,
             })
-            const excursionController = new ExcursionController()
             await excursionController.sendCode("zininkrut@gmail.com")
             return res.json('done');
         } catch (e) {

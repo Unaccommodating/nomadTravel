@@ -5,6 +5,7 @@ const userController = require("../controllers/userController");
 
 router.post('/', excursionController.create)
 router.get('/', excursionController.getAll)
+router.get('/tourists', excursionController.getTouristsByDateAndTime);
 router.get('/:id', excursionController.getOne)
 router.post('/myAddedExcursions', excursionController.myAddedExcursions)
 router.post('/myBookedExcursions', excursionController.myBookedExcursions)

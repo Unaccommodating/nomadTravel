@@ -259,6 +259,7 @@ class ExcursionController {
         try {
             const token = req.headers.authorization
             const userInfo = jwt.decode(token)
+            const id = userInfo.id
             const excursionController = new ExcursionController()
             let {
                 excursion_id, count_tickets, date
@@ -267,20 +268,27 @@ class ExcursionController {
                 where: {id: excursion_id},
                 attributes: ['places_number']
             })
+            const user = await User.findOne({
+                where: {id}, attributes: {exclude: ['password']},
+            })
+            const email = user.email
+            const price = excursion.price
+            const address = excursion.place_address
+            const title = excursion.title
             DataBook.create({
                 count_tickets,
                 date,
                 tourist_id: userInfo.id,
                 excursion_id: excursion_id,
             })
-            await excursionController.sendCode("zininkrut@gmail.com")
+            await excursionController.sendCode(email, title, count_tickets, price, address, date)
             return res.json('done');
         } catch (e) {
             return res.status(401).json({message:"Не удается получить пользователя"})
         }
     }
 
-    async sendCode(email) {
+    async sendCode(email, title, count_tickets, price, address, date) {
         const transporter = nodemailer.createTransport({
                 host: 'smtp.mail.ru',
                 port: 465,
@@ -345,11 +353,11 @@ class ExcursionController {
                         <div class="ticket">
                             <h1>БИЛЕТ</h1>
                             <div class="info">
-                                <p><strong>Название:</strong> Excursion Title</p>
-                                <p><strong>Кол-во билетов:</strong> 2</p>
-                                <p><strong>Цена:</strong> $50.00</p>
-                                <p><strong>Дата:</strong> January 1, 2022</p>
-                                <p><strong>Адрес:</strong> Excursion Address</p>
+                                <p><strong>Название:</strong> ${title}</p>
+                                <p><strong>Кол-во билетов:</strong> ${count_tickets}</p>
+                                <p><strong>Цена:</strong> ${price}</p>
+                                <p><strong>Дата:</strong> ${date}</p>
+                                <p><strong>Адрес:</strong> ${address}</p>
                             </div>
                         </div>
                     </body>

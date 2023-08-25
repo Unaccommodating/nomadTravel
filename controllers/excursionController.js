@@ -178,7 +178,7 @@ class ExcursionController {
         if (Array.isArray(images)) {
             for (let i = 0; i < images.length; i++) {
                 const fileName = uuid.v4() + ".jpg"
-                images[i].mv(path.resolve(__dirname, '../static', 'storage', fileName))
+                images[i].mv(path.resolve(__dirname, '../static', 'excursions', fileName))
                 imagesData[i] = fileName;
                 if (i === 0) {
                     backgroundImg = fileName
@@ -186,7 +186,7 @@ class ExcursionController {
             }
         } else {
             const fileName = uuid.v4() + ".jpg"
-            images.mv(path.resolve(__dirname, '../static', 'storage', fileName))
+            images.mv(path.resolve(__dirname, '../static', 'excursions', fileName))
             imagesData.push(fileName)
             backgroundImg = fileName
         }

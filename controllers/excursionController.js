@@ -222,7 +222,20 @@ class ExcursionController {
             const excursions = await Excursion.findAndCountAll({
                 where: {
                     userId: userInfo.id
-                }
+                },
+                include:
+                    [
+                        {
+                            model: User, attributes: {
+                                exclude: [
+                                    'password', 'ref_key', 'total_count', 'createdAt', 'updateAt'
+                                ],
+                            },
+                        },
+                        {
+                            model: Hashtag, as: 'hashtagExcursion', attributes: ['title']
+                        }
+                    ]
             });
             return res.json(excursions);
         } catch (e) {
@@ -248,6 +261,19 @@ class ExcursionController {
                     id: dataBookArray
                 },
                 attributes: {exclude: ['createdAt', 'updatedAt']},
+                include:
+                    [
+                        {
+                            model: User, attributes: {
+                                exclude: [
+                                    'password', 'ref_key', 'total_count', 'createdAt', 'updateAt'
+                                ],
+                            },
+                        },
+                        {
+                            model: Hashtag, as: 'hashtagExcursion', attributes: ['title']
+                        }
+                    ]
             })
             return res.json(bookedExcursions)
         } catch (e) {

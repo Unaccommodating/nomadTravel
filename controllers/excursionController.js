@@ -293,7 +293,7 @@ class ExcursionController {
             } = req.body
             const excursion = await Excursion.findOne({
                 where: {id: excursion_id},
-                attributes: ['places_number']
+                attributes: ['price', 'place_address', 'title']
             })
             const user = await User.findOne({
                 where: {id}, attributes: {exclude: ['password']},

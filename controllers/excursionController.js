@@ -121,7 +121,8 @@ class ExcursionController {
     }
 
     async getTouristsByDateAndTime(req, res) {
-        const { excursion_id, dateTime } = req.query;
+        const { excursion_id, date, time } = req.query;
+        const dateTime = date + " " + time
 
         try {
             const dataBooks = await DataBook.findAll({

@@ -140,7 +140,7 @@ class ExcursionController {
                 where: {
                     id: userIds,
                 },
-                attributes: ['id', 'name', 'email', 'phone', 'img']
+                attributes: ['id', 'name', 'email', 'phone', 'img', 'rating']
             });
 
             const usersWithTickets = users.map(user => {

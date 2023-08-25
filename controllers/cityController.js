@@ -42,18 +42,33 @@ class CityController {
 
     async create(req, res, next) {
         try{
-            const {name} = req.body
+            // const {name} = req.body
             const {img} = req.files
             let fileName = uuid.v4() + ".jpg"
-            img.mv(path.resolve(__dirname, '../static', 'cities', fileName))
+            img.mv(path.resolve(__dirname, '../static', fileName))
 
-            const city = await City.create({name, img: fileName})
-            return res.json(city)
+            // const city = await City.create({name, img: fileName})
+            return res.json(true)
         }
         catch (e) {
             next(ApiError.badRequest(e.message))
         }
     }
+
+    // async create(req, res, next) {
+    //     try{
+    //         const {name} = req.body
+    //         const {img} = req.files
+    //         let fileName = uuid.v4() + ".jpg"
+    //         img.mv(path.resolve(__dirname, '../static', 'cities', fileName))
+    //
+    //         const city = await City.create({name, img: fileName})
+    //         return res.json(city)
+    //     }
+    //     catch (e) {
+    //         next(ApiError.badRequest(e.message))
+    //     }
+    // }
 }
 
 module.exports = new CityController()

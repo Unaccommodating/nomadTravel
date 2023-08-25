@@ -339,7 +339,7 @@ class ExcursionController {
                         <style>
                             body {
                                 font-family: Arial, sans-serif;
-                                margin: 0;
+                                margin: 0 auto;
                                 padding: 20px;
                                 background-color: #f2f2f2;
                             }
@@ -347,27 +347,26 @@ class ExcursionController {
                             .ticket {
                                 max-width: 400px;
                                 margin: 0 auto;
-                                background-color: #fff;
-                                padding: 20px;
+                                background-image: #fff;
                                 border-radius: 5px;
                                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                                 border: 5px solid #3498db;
                             }
                             
                             h1 {
-                                font-size: 24px;
-                                color: #333;
-                                margin: 0;
+                                background-color: #3498db;
+                                font-size: 20px;
+                                color: #ffffff;
                                 text-align: center;
-                                margin-bottom: 20px;
                             }
                             
                             .info {
+                                margin-left: 15px auto;
                                 margin-bottom: 20px;
                             }
                             
                             .info p {
-                                margin: 0;
+                                margin: 0 auto;
                                 color: #666;
                             }
                             
@@ -384,7 +383,7 @@ class ExcursionController {
                     Мы надеемся, что экскурсия станет для вас незабываемым приключением и оставит самые яркие воспоминания.
                     Спасибо, что выбрали нас!
                     С наилучшими пожеланиями, NomadTravel
-                    <br>
+                    <hr>
                         <div class="ticket">
                             <h1>БИЛЕТ</h1>
                             <div class="info">

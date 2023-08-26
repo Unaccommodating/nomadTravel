@@ -347,7 +347,7 @@ class ExcursionController {
                             .ticket {
                                 max-width: 400px;
                                 margin: 0 auto;
-                                background-image: #fff;
+                                background-color: #fff;
                                 border-radius: 5px;
                                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                                 border: 5px solid #3498db;
@@ -361,7 +361,7 @@ class ExcursionController {
                             }
                             
                             .info {
-                                margin-left: 15px auto;
+                                margin-left: 15px;
                                 margin-bottom: 20px;
                             }
                             

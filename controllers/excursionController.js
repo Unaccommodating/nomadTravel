@@ -11,6 +11,9 @@ class ExcursionController {
             query, excursion_type, background_img,
             places_number, minPrice, maxPrice,
             rating, startDate, endDate } = req.query;
+        const token = req.headers.authorization
+        const userInfo = jwt.decode(token);
+        const userId = userInfo.id
         page = page || 1;
         limit = limit || 9;
         const offset = (page - 1) * limit;
@@ -25,7 +28,7 @@ class ExcursionController {
                 ],
             },
             include: [],
-            where: {},
+            where: {userId: !userId},
         };
 
         if (cityId) {
@@ -289,12 +292,19 @@ class ExcursionController {
             const id = userInfo.id
             const excursionController = new ExcursionController()
             let {
-                excursion_id, count_tickets, date
+                excursion_id, count_tickets, date, time
             } = req.body
+            const dateTime = date + " " + time;
             const excursion = await Excursion.findOne({
                 where: {id: excursion_id},
                 attributes: ['price', 'place_address', 'title']
             })
+            const usersWithTickets = await excursionController.getTouristsByDateAndTime({
+                query: { excursion_id, date: date, time: time }
+            });
+            if (usersWithTickets.count >= excursion.places_number) {
+                return res.json({ success: false, message: 'Нет свободных мест' });
+            }
             const user = await User.findOne({
                 where: {id}, attributes: {exclude: ['password']},
             })
@@ -304,11 +314,11 @@ class ExcursionController {
             const title = excursion.title
             DataBook.create({
                 count_tickets,
-                date,
+                date: dateTime,
                 tourist_id: userInfo.id,
                 excursion_id: excursion_id,
             })
-            await excursionController.sendCode(email, title, count_tickets, price, address, date)
+            await excursionController.sendCode(email, title, count_tickets, price, address, dateTime)
             return res.json('done');
         } catch (e) {
             return res.status(401).json({message:"Не удается получить пользователя"})

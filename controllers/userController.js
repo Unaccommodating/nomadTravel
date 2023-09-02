@@ -46,7 +46,7 @@ class UserController {
     }
 
     async registration(req, res, next) {
-        const {name, email, phone, hashtag, ref_key} = req.body;
+        const {name, email, phone, hashtag, friend_key} = req.body;
         const rating = 4.5;
         if (!email) {
             return next(ApiError.badRequest('Некорректный email'));
@@ -66,13 +66,18 @@ class UserController {
         } else {
             fileName = null
         }
+        const userController = new UserController()
+        const ref_key = await userController.generateUniqueRefKey();
         const user = await User.create({name, email, phone, hashtag, ref_key, rating, img: fileName || null})
-        if (ref_key) {
-            user.free_book_count += 1;
-            await user.save();
+        if (friend_key) {
+            const friend = await User.findOne({where: {ref_key: friend_key}});
+            if (friend) {
+                friend.free_book_count += 1
+                user.free_book_count += 1;
+                await user.save();
+            }
         }
         const code = generateVerificationCode()
-        const userController = new UserController()
         await userController.sendCode(email, code)
         await Candidate.create({email, code})
         return res.json({answer: true})
@@ -95,20 +100,6 @@ class UserController {
             return next(ApiError.internal('Ошибка'))
         }
     }
-
-    // async login(req, res, next) {
-    //     const {email, password} = req.body
-    //     const user = await User.findOne({where: {email}})
-    //     if (!user){
-    //         return next(ApiError.internal('Пользователь не найден'))
-    //     }
-    //     let comparePassword = bcrypt.compareSync(password, user.password)
-    //     if (!comparePassword){
-    //         return next(ApiError.internal('Указан неверный пароль'))
-    //     }
-    //     const token = generateJWT(user.id, user.email)
-    //     return res.json({token})
-    // }
 
     async getUser(req, res, next){
         try {
@@ -137,6 +128,17 @@ class UserController {
         } catch (e) {
             return res.status(401).json({message:"Не удается получить пользователя"})
         }
+    }
+
+    async generateUniqueRefKey() {
+        let ref_key;
+        do {
+            ref_key = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+            const existingUser = await User.findOne({ where: { ref_key } });
+        } while (existingUser);
+
+        return ref_key;
     }
 
     async sendCode(email, verificationCode) {

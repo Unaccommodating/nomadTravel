@@ -13,7 +13,7 @@ class ExcursionController {
             rating, startDate, endDate } = req.query;
         const token = req.headers.authorization
         const userInfo = jwt.decode(token);
-        const userId = userInfo.id
+        const userId = userInfo ? userInfo.id : null;
         page = page || 1;
         limit = limit || 9;
         const offset = (page - 1) * limit;
@@ -84,7 +84,7 @@ class ExcursionController {
                         [Op.gt]: 4,
                     },
                     id: {
-                        [Op.ne]: userId
+                        [Op.not]: userId
                     }
                 },
             });
@@ -94,7 +94,7 @@ class ExcursionController {
                 attributes: ['id', 'name', 'img', 'rating', 'phone'],
                 where: {
                     id: {
-                        [Op.ne]: userId
+                        [Op.not]: userId
                     }
                 }
             });

@@ -28,11 +28,7 @@ class ExcursionController {
                 ],
             },
             include: [],
-            where: {
-                userId: {
-                    [Op.ne]: userId,
-                },
-            },
+            where: {},
         };
 
         if (cityId) {
@@ -87,12 +83,20 @@ class ExcursionController {
                     rating: {
                         [Op.gt]: 4,
                     },
+                    id: {
+                        [Op.ne]: userId
+                    }
                 },
             });
         } else {
             filter.include.push({
                 model: User,
                 attributes: ['id', 'name', 'img', 'rating', 'phone'],
+                where: {
+                    id: {
+                        [Op.ne]: userId
+                    }
+                }
             });
         }
 

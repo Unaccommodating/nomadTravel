@@ -28,7 +28,11 @@ class ExcursionController {
                 ],
             },
             include: [],
-            where: {userId: !userId},
+            where: {
+                userId: {
+                    [Op.ne]: userId,
+                },
+            },
         };
 
         if (cityId) {

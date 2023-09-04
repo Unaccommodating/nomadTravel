@@ -134,7 +134,6 @@ class ExcursionController {
     async getTouristsByDateAndTime(req, res) {
         const { excursion_id, date, time } = req.query;
         const dateTime = date + " " + time
-
         try {
             const dataBooks = await DataBook.findAll({
                 where: {
@@ -144,9 +143,7 @@ class ExcursionController {
                     },
                 },
             });
-
             const userIds = dataBooks.map(dataBook => dataBook.tourist_id);
-
             const users = await User.findAll({
                 where: {
                     id: userIds,
@@ -302,17 +299,17 @@ class ExcursionController {
             let {
                 excursion_id, count_tickets, date, time
             } = req.body
-            const dateTime = date + " " + time;
+            const dateTime = new Date(date + " " + time);
             const excursion = await Excursion.findOne({
                 where: {id: excursion_id},
                 attributes: ['price', 'place_address', 'title']
             })
-            const usersWithTickets = await excursionController.getTouristsByDateAndTime({
-                query: { excursion_id, date: date, time: time }
-            });
-            if (usersWithTickets.count >= excursion.places_number) {
-                return res.json({ success: false, message: 'Нет свободных мест' });
-            }
+            // const usersWithTickets = await excursionController.getTouristsByDateAndTime({
+            //     query: { excursion_id, date: date, time: time }
+            // });
+            // if ((usersWithTickets.count + count_tickets) > excursion.places_number) {
+            //     return res.json({ success: false, message: 'Нет свободных мест' });
+            // }
             const user = await User.findOne({
                 where: {id}, attributes: {exclude: ['password']},
             })

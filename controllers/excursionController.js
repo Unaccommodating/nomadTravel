@@ -134,12 +134,13 @@ class ExcursionController {
     async getTouristsByDateAndTime(req, res) {
         const { excursion_id, date, time } = req.query;
         const dateTime = date + " " + time
+        const dataString = dateTime.toISOString().slice(0, 19).replace('T', ' ');
         try {
             const dataBooks = await DataBook.findAll({
                 where: {
                     excursion_id: excursion_id,
                     date: {
-                        [Op.eq]: dateTime.toISOString().slice(0, 19).replace('T', ' ')
+                        [Op.eq]: dataString,
                     },
                 },
             });

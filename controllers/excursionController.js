@@ -133,7 +133,8 @@ class ExcursionController {
 
     async getTouristsByDateAndTime(req, res) {
         const { excursion_id, date, time } = req.query;
-        const dateTime = new Date(date + " " + time + "+05");
+        const dateTime = new Date(date + " " + time);
+        dateTime.setUTCHours(dateTime.getUTCHours() + 5);
         try {
             const dataBooks = await DataBook.findAll({
                 where: {

@@ -139,7 +139,7 @@ class ExcursionController {
                 where: {
                     excursion_id: excursion_id,
                     date: {
-                        [Op.eq]: dateTime,
+                        [Op.eq]: dateTime.toISOString().slice(0, 19).replace('T', ' ')
                     },
                 },
             });
